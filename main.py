@@ -6,7 +6,7 @@
 
 import sys, tarfile, os
 from PySide.QtGui import *
-import AMainWindow
+from gui import AMainWindow
 
 class OpenFileDialog(QFileDialog):
     def __init__(self):
