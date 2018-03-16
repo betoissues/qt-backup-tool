@@ -23,6 +23,8 @@ class MainWindow(QMainWindow, AMainWindow.Ui_MainWindow):
 
         self.setupUi(self)
 
+        self.center()
+
         self.btnDocuments.clicked.connect(self.openFile)
         self.btnMusic.clicked.connect(self.openFile)
         self.btnVideos.clicked.connect(self.openFile)
@@ -32,6 +34,12 @@ class MainWindow(QMainWindow, AMainWindow.Ui_MainWindow):
 
 
         self.show()
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     def openFile(self):
         openFileDialog = OpenFileDialog()
