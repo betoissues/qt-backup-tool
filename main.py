@@ -5,21 +5,21 @@
 # This tool helps making .tar.gz archives from specified directories.
 
 import sys, tarfile, os
-from PySide.QtGui import *
+from PySide2 import QtWidgets
 from gui import AMainWindow
 
-class OpenFileDialog(QFileDialog):
+class OpenFileDialog(QtWidgets.QFileDialog):
     def __init__(self):
-        QFileDialog.__init__(self)
+        QtWidgets.QFileDialog.__init__(self)
 
-        self.setFileMode(QFileDialog.Directory)
-        self.setOption(QFileDialog.ShowDirsOnly, True)
+        self.setFileMode(QtWidgets.QFileDialog.Directory)
+        self.setOption(QtWidgets.QFileDialog.ShowDirsOnly, True)
 
         self.show()
 
-class MainWindow(QMainWindow, AMainWindow.Ui_MainWindow):
+class MainWindow(QtWidgets.QMainWindow, AMainWindow.Ui_MainWindow):
     def __init__(self):
-        QMainWindow.__init__(self)
+        QtWidgets.QMainWindow.__init__(self)
 
         self.setupUi(self)
 
@@ -37,7 +37,7 @@ class MainWindow(QMainWindow, AMainWindow.Ui_MainWindow):
 
     def center(self):
         qr = self.frameGeometry()
-        cp = QDesktopWidget().availableGeometry().center()
+        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
@@ -82,7 +82,7 @@ class MainWindow(QMainWindow, AMainWindow.Ui_MainWindow):
 
 
 def main():
-    app = QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
 
     sys.exit(app.exec_())
