@@ -5,44 +5,39 @@
 # This tool helps making .tar.gz archives from specified directories.
 
 import sys, tarfile, os
-from PySide2 import QtWidgets
 from gui import AMainWindow
+from PySide2.QtWidgets import (QFileDialog, QMainWindow, QDesktopWidget,
+    QApplication)
 
-class OpenFileDialog(QtWidgets.QFileDialog):
+class OpenFileDialog(QFileDialog):
     def __init__(self):
-        QtWidgets.QFileDialog.__init__(self)
+        QFileDialog.__init__(self)
 
-        self.setFileMode(QtWidgets.QFileDialog.Directory)
-        self.setOption(QtWidgets.QFileDialog.ShowDirsOnly, True)
+        self.setFileMode(QFileDialog.Directory)
+        self.setOption(QFileDialog.ShowDirsOnly, True)
 
-        self.show()
-
-class MainWindow(QtWidgets.QMainWindow, AMainWindow.Ui_MainWindow):
+class MainWindow(QMainWindow, AMainWindow.Ui_MainWindow):
     def __init__(self):
-        QtWidgets.QMainWindow.__init__(self)
+        QMainWindow.__init__(self)
 
         self.setupUi(self)
-
         self.center()
 
         self.btnDocuments.clicked.connect(self.openFile)
         self.btnMusic.clicked.connect(self.openFile)
         self.btnVideos.clicked.connect(self.openFile)
         self.btnImages.clicked.connect(self.openFile)
-
         self.btnBackup.clicked.connect(self.backup)
-
-
-        self.show()
 
     def center(self):
         qr = self.frameGeometry()
-        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+        cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
     def openFile(self):
         openFileDialog = OpenFileDialog()
+        openFileDialog.show()
 
         sender = self.sender()
 
@@ -57,20 +52,22 @@ class MainWindow(QtWidgets.QMainWindow, AMainWindow.Ui_MainWindow):
                 self.txtImages.setText(openFileDialog.selectedFiles().pop())
 
     def backup(self):
-        if not(self.chkDocuments.isChecked() or
-                self.chkMusic.isChecked() or
-                self.chkVideos.isChecked() or
-                self.chkImages.isChecked()):
-            self.statusBar().showMessage('Please choose a directory to backup')
-            return
+        checkedDocuments = self.chkDocuments.isChecked()
+        checkedMusic = self.chkMusic.isChecked()
+        checkedVideos = self.chkVideos.isChecked()
+        checkedImages = self.chkImages.isChecked()
 
-        if self.chkDocuments.isChecked() and self.txtDocuments.text() != '':
+        if not(checkedDocuments or checkedMusic or checkedVideos or
+            checkedImages):
+            self.statusBar().showMessage('Please choose a directory to backup')
+
+        if checkedDocuments and self.txtDocuments.text() != '':
             self.make_tarfile('documents.tar.gz', self.txtDocuments.text())
-        if self.chkMusic.isChecked():
+        if checkedMusic:
             self.make_tarfile('music.tar.gz', self.txtMusic.text())
-        if self.chkVideos.isChecked():
+        if checkedVideos:
             self.make_tarfile('videos.tar.gz', self.txtVideos.text())
-        if self.chkImages.isChecked():
+        if checkedImages:
             self.make_tarfile('images.tar.gz', self.txtImages.text())
 
     def make_tarfile(self, output_filename, source_dir):
@@ -78,13 +75,13 @@ class MainWindow(QtWidgets.QMainWindow, AMainWindow.Ui_MainWindow):
         with tarfile.open(output_filename, "w:gz") as tar:
             tar.add(source_dir, arcname=os.path.basename(source_dir))
 
-        self.statusBar().showMessage(output_filename + ' is ready.')
+        self.statusBar().showMessage("{} is ready".format(output_filename))
 
 
 def main():
-    app = QtWidgets.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     window = MainWindow()
-
+    window.show()
     sys.exit(app.exec_())
 
 if __name__ == '__main__':
